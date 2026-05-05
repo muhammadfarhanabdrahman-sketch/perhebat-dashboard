@@ -695,8 +695,16 @@ function setBar(id, pct) {
 }
 
 async function loadData() {
+  // Show fallback data immediately, then try to update from live
+  const fallback = getFallbackData();
+  renderDashboard(fallback, '5-05-2026');
+
+  // Try live fetch in background
   try {
-    const res = await fetch(PROXY_URL);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 6000);
+    const res = await fetch(PROXY_URL, { signal: controller.signal });
+    clearTimeout(timeout);
     if (!res.ok) throw new Error('Fetch failed');
     const text = await res.text();
     const rows = parseCSV(text);
@@ -741,9 +749,7 @@ async function loadData() {
     renderDashboard(dataRows, kemaskini);
 
   } catch (e) {
-    console.error(e);
-    document.getElementById('error-box').style.display = 'block';
-    renderDashboard(getFallbackData(), '5-05-2026');
+    console.log('Live fetch failed, using fallback data');
   }
 }
 
@@ -889,15 +895,9 @@ function renderDashboard(data, kemaskini) {
     <td>${totalPenem}</td>
   </tr>`;
 
-  // Show main
-  setTimeout(() => {
-    document.getElementById('loading').style.opacity = '0';
-    document.getElementById('loading').style.transition = 'opacity 0.5s';
-    setTimeout(() => {
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('main').style.display = 'block';
-    }, 500);
-  }, 1800);
+  // Show main immediately
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('main').style.display = 'block';
 }
 
 // Chart switching
