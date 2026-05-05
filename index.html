@@ -485,7 +485,7 @@
       <div class="logo-sub">Pelan Transformasi 2026</div>
     </div>
     <div class="divider-v"></div>
-    <div class="logo-sub">Laporan Keberhasilan<br>Pelan Transformasi PERHEBAT</div>
+    <div class="logo-sub">Laporan Keberhasilan<br>Penempatan Graduan</div>
   </div>
   <div class="topbar-right">
     <div class="status-dot"></div>
@@ -529,6 +529,13 @@
         <div class="kpi-sub">Dari sasaran 1,000 penempatan</div>
         <div class="kpi-progress"><div class="kpi-progress-fill" id="kpi-pct-bar"></div></div>
       </div>
+      <div class="kpi-card" style="--accent:var(--coral)">
+        <div class="kpi-label">Baki Sasaran</div>
+        <div class="kpi-value" id="kpi-negeri">—</div>
+        <div class="kpi-sub">Penempatan lagi diperlukan</div>
+        <div class="kpi-progress"><div class="kpi-progress-fill" id="kpi-negeri-bar"></div></div>
+      </div>
+    </div>
 
     <!-- CATEGORY SECTION -->
     <div class="section-head" style="margin-top:8px">
@@ -639,6 +646,7 @@
 
 <script>
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRmAXQYDwtqLZmqtk9ztWDf84YgI6rM80ZFF4bfsjkNAhSArrwKkN4dwN18sAEoX6rlnOH0T77KY2eW/pub?gid=1884809879&single=true&output=csv';
+const PROXY_URL = 'https://api.allorigins.win/get?url=' + encodeURIComponent(CSV_URL);
 
 let chartBar = null;
 let chartDonut = null;
@@ -683,13 +691,17 @@ function setBar(id, pct) {
 
 async function loadData() {
   try {
-    const res = await fetch(CSV_URL);
+    const res = await fetch(PROXY_URL);
     if (!res.ok) throw new Error('Fetch failed');
-    const text = await res.text();
+    const json = await res.json();
+    const text = json.contents;
     const rows = parseCSV(text);
 
     // Find header row (row with NEGERI)
     let headerIdx = rows.findIndex(r => r.some(c => c.toUpperCase().includes('NEGERI')));
+    // CSV has empty first column, so data starts at index 1
+    // Headers: [empty], NEGERI, PELUANG LDI, PENEMPATAN LDI, PELUANG PEKERJAAN, PENEMPATAN PEKERJAAN
+    let headerIdx = rows.findIndex(r => r.some(c => c.toUpperCase().includes('NEGERI') && !c.toUpperCase().includes('SEMBILAN')));
     if (headerIdx === -1) headerIdx = 1;
 
     const dataRows = [];
@@ -699,7 +711,7 @@ async function loadData() {
       const r = rows[i];
       if (!r[1] || r[1].trim() === '') continue;
       const name = r[1].trim().toUpperCase();
-      if (name === 'JUMLAH KESELURUHAN' || name.startsWith('JUMLAH')) continue;
+      if (name.startsWith('JUMLAH')) continue;
       if (name.startsWith('LAPORAN') || name.startsWith('KATEGORI')) break;
       if (name.startsWith('KEMASKINI')) {
         kemaskini = r[2] || kemaskini;
@@ -707,10 +719,10 @@ async function loadData() {
       }
       dataRows.push({
         negeri: name,
-        ldiP: n(r[2]) + n(r[4]),
-        ldiN: n(r[3]) + n(r[5]),
-        pekP: n(r[6]),
-        pekN: n(r[7]),
+        ldiP: n(r[2]),
+        ldiN: n(r[3]),
+        pekP: n(r[4]),
+        pekN: n(r[5]),
       });
     }
 
@@ -751,7 +763,7 @@ function renderDashboard(data, kemaskini) {
   const totalPeluang = data.reduce((s,r) => s + r.ldiP + r.pekP, 0);
   const totalPenem   = data.reduce((s,r) => s + r.ldiN + r.pekN, 0);
   const pct = Math.round(totalPenem / 1000 * 100);
-  const negeriAktif = data.filter(r => (r.ldiP+r.pekP) > 0).length;
+  const baki = Math.max(1000 - totalPenem, 0);
 
   const ldiP = data.reduce((s,r)=>s+r.ldiP,0);
   const ldiN = data.reduce((s,r)=>s+r.ldiN,0);
@@ -762,12 +774,12 @@ function renderDashboard(data, kemaskini) {
   animNum(document.getElementById('kpi-peluang'), totalPeluang);
   animNum(document.getElementById('kpi-penempatan'), totalPenem);
   animNum(document.getElementById('kpi-pct'), pct, '%');
-  animNum(document.getElementById('kpi-negeri'), negeriAktif);
+  animNum(document.getElementById('kpi-negeri'), baki);
 
   setBar('kpi-peluang-bar', totalPeluang / 1500 * 100);
   setBar('kpi-penempatan-bar', totalPenem / 1000 * 100);
   setBar('kpi-pct-bar', pct);
-  setBar('kpi-negeri-bar', negeriAktif / 11 * 100);
+  setBar('kpi-negeri-bar', Math.max(0, 100 - pct));
 
   // Category cards
   document.getElementById('cat-ldi-p').textContent = ldiP.toLocaleString();
