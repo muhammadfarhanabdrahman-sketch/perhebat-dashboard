@@ -651,7 +651,6 @@
 
 <script>
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRmAXQYDwtqLZmqtk9ztWDf84YgI6rM80ZFF4bfsjkNAhSArrwKkN4dwN18sAEoX6rlnOH0T77KY2eW/pub?gid=1884809879&single=true&output=csv';
-const PROXY_URL = 'https://corsproxy.io/?' + encodeURIComponent(CSV_URL);
 
 let chartBar = null;
 let chartDonut = null;
@@ -695,24 +694,18 @@ function setBar(id, pct) {
 }
 
 async function loadData() {
-  // Show fallback data immediately, then try to update from live
-  const fallback = getFallbackData();
-  renderDashboard(fallback, '5-05-2026');
+  // Papar fallback data SEGERA — tak perlu tunggu internet
+  renderDashboard(getFallbackData(), '5-05-2026');
 
-  // Try live fetch in background
+  // Cuba fetch live data dalam background (tak block UI)
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 6000);
-    const res = await fetch(PROXY_URL, { signal: controller.signal });
-    clearTimeout(timeout);
-    if (!res.ok) throw new Error('Fetch failed');
+    setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(CSV_URL, { signal: controller.signal });
+    if (!res.ok) throw new Error();
     const text = await res.text();
     const rows = parseCSV(text);
 
-    // Find header row (row with NEGERI)
-    let headerIdx = rows.findIndex(r => r.some(c => c.toUpperCase().includes('NEGERI')));
-    // CSV has empty first column, so data starts at index 1
-    // Headers: [empty], NEGERI, PELUANG LDI, PENEMPATAN LDI, PELUANG PEKERJAAN, PENEMPATAN PEKERJAAN
     let headerIdx = rows.findIndex(r => r.some(c => c.toUpperCase().includes('NEGERI') && !c.toUpperCase().includes('SEMBILAN')));
     if (headerIdx === -1) headerIdx = 1;
 
@@ -725,31 +718,22 @@ async function loadData() {
       const name = r[1].trim().toUpperCase();
       if (name.startsWith('JUMLAH')) continue;
       if (name.startsWith('LAPORAN') || name.startsWith('KATEGORI')) break;
-      if (name.startsWith('KEMASKINI')) {
-        kemaskini = r[2] || kemaskini;
-        continue;
-      }
-      dataRows.push({
-        negeri: name,
-        ldiP: n(r[2]),
-        ldiN: n(r[3]),
-        pekP: n(r[4]),
-        pekN: n(r[5]),
-      });
+      if (name.startsWith('KEMASKINI')) { kemaskini = r[2] || kemaskini; continue; }
+      dataRows.push({ negeri: name, ldiP: n(r[2]), ldiN: n(r[3]), pekP: n(r[4]), pekN: n(r[5]) });
     }
 
-    // Look for kemaskini in rows
     const kemRow = rows.find(r => r.join('').toLowerCase().includes('kemaskini'));
     if (kemRow) {
-      const d = kemRow.find(c => c.match(/\d{1,2}[-\/]\d{1,2}[-\/]\d{4}|\d{4}/));
+      const d = kemRow.find(c => c.match(/\d{1,2}[-\/]\d{1,2}[-\/]\d{4}/));
       if (d) kemaskini = d;
     }
 
-    allData = dataRows;
-    renderDashboard(dataRows, kemaskini);
-
+    if (dataRows.length > 0) {
+      allData = dataRows;
+      renderDashboard(dataRows, kemaskini);
+    }
   } catch (e) {
-    console.log('Live fetch failed, using fallback data');
+    console.log('Guna data fallback');
   }
 }
 
