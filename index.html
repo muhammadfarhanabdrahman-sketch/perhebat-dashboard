@@ -588,6 +588,11 @@
       <button class="filter-btn" onclick="switchChart('pekerjaan',this)">Pekerjaan</button>
     </div>
 
+    <div class="filter-tabs">
+      <button class="filter-btn active" onclick="switchChart('ldi',this)">LDI</button>
+      <button class="filter-btn" onclick="switchChart('pekerjaan',this)">Pekerjaan</button>
+    </div>
+
     <div class="charts-row">
       <div class="card">
         <div class="card-title" id="chart-title">Peluang & Penempatan LDI Mengikut Negeri</div>
@@ -646,7 +651,7 @@
 
 <script>
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRmAXQYDwtqLZmqtk9ztWDf84YgI6rM80ZFF4bfsjkNAhSArrwKkN4dwN18sAEoX6rlnOH0T77KY2eW/pub?gid=1884809879&single=true&output=csv';
-const PROXY_URL = 'https://api.allorigins.win/get?url=' + encodeURIComponent(CSV_URL);
+const PROXY_URL = 'https://corsproxy.io/?' + encodeURIComponent(CSV_URL);
 
 let chartBar = null;
 let chartDonut = null;
@@ -693,8 +698,7 @@ async function loadData() {
   try {
     const res = await fetch(PROXY_URL);
     if (!res.ok) throw new Error('Fetch failed');
-    const json = await res.json();
-    const text = json.contents;
+    const text = await res.text();
     const rows = parseCSV(text);
 
     // Find header row (row with NEGERI)
