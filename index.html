@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PERHEBAT 2026 — Laporan Keberhasilan Pelan Transformasi</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -29,7 +28,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -62,11 +61,12 @@
   .topbar-left { display: flex; align-items: center; gap: 20px; }
 
   .logo {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Courier New', monospace;
     font-size: 28px;
     letter-spacing: 4px;
     color: var(--green);
     line-height: 1;
+    font-weight: bold;
   }
 
   .logo-sub {
@@ -268,7 +268,7 @@
   }
 
   .filter-btn {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Segoe UI', system-ui, sans-serif;
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 1px;
@@ -846,7 +846,7 @@ function renderDashboard(data, kemaskini) {
         <div style="width:10px;height:10px;border-radius:2px;background:${donutColors[i]}"></div>
         <span style="color:#5a8a6a">${l}</span>
       </div>
-      <span style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:${donutColors[i]}">${donutVals[i]}</span>
+      <span style="font-family:'Courier New',monospace;font-weight:bold;font-size:16px;color:${donutColors[i]}">${donutVals[i]}</span>
     </div>`
   ).join('');
 
