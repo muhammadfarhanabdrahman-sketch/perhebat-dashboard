@@ -621,7 +621,7 @@
 </div>
 
 <script>
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRmAXQYDwtqLZmqtk9ztWDf84YgI6rM80ZFF4bfsjkNAhSArrwKkN4dwN18sAEoX6rlnOH0T77KY2eW/pub?gid=1884809879&single=true&output=csv';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxU4qkTzXewICVBiRf2yZxb4DCM2nB8lNm28JwDaTTtc4xZSbzO-s-hF3ZNZWv7JX5_/exec';
 
 let allData = [];
 
@@ -667,40 +667,17 @@ async function loadData() {
   allData = getFallbackData();
   renderDashboard(allData, '5-05-2026');
 
-  // Cuba fetch live data senyap-senyap dalam background
+  // Cuba fetch live data dari Apps Script
   try {
     const controller = new AbortController();
     setTimeout(() => controller.abort(), 8000);
-    const res = await fetch(CSV_URL, { signal: controller.signal });
+    const res = await fetch(API_URL, { signal: controller.signal });
     if (!res.ok) throw new Error();
-    const text = await res.text();
-    const rows = parseCSV(text);
+    const json = await res.json();
 
-    let headerIdx = rows.findIndex(r => r.some(c => c.toUpperCase().includes('NEGERI') && !c.toUpperCase().includes('SEMBILAN')));
-    if (headerIdx === -1) headerIdx = 1;
-
-    const dataRows = [];
-    let kemaskini = '5-05-2026';
-
-    for (let i = headerIdx + 1; i < rows.length; i++) {
-      const r = rows[i];
-      if (!r[1] || r[1].trim() === '') continue;
-      const name = r[1].trim().toUpperCase();
-      if (name.startsWith('JUMLAH')) continue;
-      if (name.startsWith('LAPORAN') || name.startsWith('KATEGORI')) break;
-      if (name.startsWith('KEMASKINI')) { kemaskini = r[2] || kemaskini; continue; }
-      dataRows.push({ negeri: name, ldiP: n(r[2]), ldiN: n(r[3]), pekP: n(r[4]), pekN: n(r[5]) });
-    }
-
-    const kemRow = rows.find(r => r.join('').toLowerCase().includes('kemaskini'));
-    if (kemRow) {
-      const d = kemRow.find(c => c.match(/\d{1,2}[-\/]\d{1,2}[-\/]\d{4}/));
-      if (d) kemaskini = d;
-    }
-
-    if (dataRows.length > 0) {
-      allData = dataRows;
-      renderDashboard(dataRows, kemaskini);
+    if (json.data && json.data.length > 0) {
+      allData = json.data;
+      renderDashboard(json.data, json.kemaskini || '5-05-2026');
     }
   } catch (e) {
     console.log('Guna data fallback');
