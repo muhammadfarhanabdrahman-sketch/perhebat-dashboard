@@ -663,9 +663,21 @@ function setBar(id, pct) {
 }
 
 async function loadData() {
-  // Papar fallback TERUS — tak tunggu internet langsung
+  // Papar fallback TERUS
   allData = getFallbackData();
   renderDashboard(allData, '5-05-2026');
+  // Override KPI dengan summary betul
+  const s = getFallbackSummary();
+  animNum(document.getElementById('kpi-ldi-p'), s.ldiPeluang);
+  animNum(document.getElementById('kpi-ldi-n'), s.ldiPenem);
+  animNum(document.getElementById('kpi-pek-p'), s.pekPeluang);
+  animNum(document.getElementById('kpi-pek-n'), s.pekPenem);
+  animNum(document.getElementById('kpi-pct-ldi'), Math.round(s.ldiPenem/s.ldiPeluang*100), '%');
+  animNum(document.getElementById('kpi-pct-pek'), Math.round(s.pekPenem/s.pekPeluang*100), '%');
+  setBar('kpi-ldi-n-bar', s.ldiPenem/s.ldiPeluang*100);
+  setBar('kpi-pek-n-bar', s.pekPenem/s.pekPeluang*100);
+  setBar('kpi-pct-ldi-bar', s.ldiPenem/s.ldiPeluang*100);
+  setBar('kpi-pct-pek-bar', s.pekPenem/s.pekPeluang*100);
 
   // Cuba fetch live data dari Apps Script
   try {
@@ -675,9 +687,33 @@ async function loadData() {
     if (!res.ok) throw new Error();
     const json = await res.json();
 
-    if (json.data && json.data.length > 0) {
-      allData = json.data;
-      renderDashboard(json.data, json.kemaskini || '5-05-2026');
+    if (json.summary) {
+      const s = json.summary;
+      const summaryData = [{
+        negeri: 'SUMMARY',
+        ldiP: s.ldiPeluang, ldiN: s.ldiPenem,
+        pekP: s.pekPeluang, pekN: s.pekPenem
+      }];
+      // Update KPI terus
+      const ldiP = s.ldiPeluang, ldiN = s.ldiPenem;
+      const pekP = s.pekPeluang, pekN = s.pekPenem;
+      const totalPenem = ldiN + pekN;
+      const pct = Math.round(totalPenem / 1000 * 100);
+
+      animNum(document.getElementById('kpi-ldi-p'), ldiP);
+      animNum(document.getElementById('kpi-ldi-n'), ldiN);
+      animNum(document.getElementById('kpi-pek-p'), pekP);
+      animNum(document.getElementById('kpi-pek-n'), pekN);
+      animNum(document.getElementById('kpi-pct-ldi'), ldiP > 0 ? Math.round(ldiN/ldiP*100) : 0, '%');
+      animNum(document.getElementById('kpi-pct-pek'), pekP > 0 ? Math.round(pekN/pekP*100) : 0, '%');
+
+      setBar('kpi-ldi-n-bar', ldiP > 0 ? ldiN/ldiP*100 : 0);
+      setBar('kpi-pek-n-bar', pekP > 0 ? pekN/pekP*100 : 0);
+      setBar('kpi-pct-ldi-bar', ldiP > 0 ? ldiN/ldiP*100 : 0);
+      setBar('kpi-pct-pek-bar', pekP > 0 ? pekN/pekP*100 : 0);
+
+      document.getElementById('last-updated').textContent = json.kemaskini || '5-05-2026';
+      document.getElementById('date-badge').textContent = 'Kemaskini: ' + (json.kemaskini || '5-05-2026');
     }
   } catch (e) {
     console.log('Guna data fallback');
@@ -687,17 +723,21 @@ async function loadData() {
 function getFallbackData() {
   return [
     {negeri:'NEGERI SEMBILAN',ldiP:13,ldiN:0,pekP:12,pekN:0},
-    {negeri:'MELAKA',ldiP:32,ldiN:0,pekP:39,pekN:0},
+    {negeri:'MELAKA',ldiP:52,ldiN:0,pekP:39,pekN:0},
     {negeri:'JOHOR',ldiP:42,ldiN:0,pekP:110,pekN:4},
     {negeri:'PAHANG',ldiP:4,ldiN:8,pekP:72,pekN:1},
     {negeri:'KELANTAN/TERENGGANU',ldiP:23,ldiN:3,pekP:22,pekN:0},
     {negeri:'PERAK',ldiP:12,ldiN:12,pekP:9,pekN:0},
     {negeri:'KEDAH/PERLIS',ldiP:57,ldiN:1,pekP:0,pekN:0},
     {negeri:'PULAU PINANG',ldiP:81,ldiN:13,pekP:87,pekN:12},
-    {negeri:'SABAH',ldiP:34,ldiN:26,pekP:0,pekN:0},
+    {negeri:'SABAH',ldiP:34,ldiN:13,pekP:0,pekN:0},
     {negeri:'SARAWAK',ldiP:38,ldiN:22,pekP:427,pekN:428},
     {negeri:'SELANGOR',ldiP:59,ldiN:0,pekP:3,pekN:3},
   ];
+}
+
+function getFallbackSummary() {
+  return { ldiPeluang: 441, ldiPenem: 85, pekPeluang: 781, pekPenem: 448 };
 }
 
 function renderDashboard(data, kemaskini) {
