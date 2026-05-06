@@ -510,82 +510,59 @@
       <div class="badge badge-green">Sasaran 2026: 1,000</div>
     </div>
 
-    <div class="kpi-grid">
+    <div class="kpi-grid" style="grid-template-columns:1fr 1fr">
       <div class="kpi-card" style="--accent:var(--green)">
-        <div class="kpi-label">Jumlah Peluang</div>
-        <div class="kpi-value" id="kpi-peluang">—</div>
-        <div class="kpi-sub">Keseluruhan peluang dibuka</div>
-        <div class="kpi-progress"><div class="kpi-progress-fill" id="kpi-peluang-bar"></div></div>
-      </div>
-      <div class="kpi-card" style="--accent:var(--blue)">
-        <div class="kpi-label">Jumlah Penempatan</div>
-        <div class="kpi-value" id="kpi-penempatan">—</div>
-        <div class="kpi-sub">Berjaya ditempatkan</div>
-        <div class="kpi-progress"><div class="kpi-progress-fill" id="kpi-penempatan-bar"></div></div>
+        <div class="kpi-label" style="font-size:13px;letter-spacing:3px;margin-bottom:16px">LDI</div>
+        <div style="display:flex;align-items:flex-end;gap:24px">
+          <div>
+            <div style="font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Peluang</div>
+            <div style="font-family:'Courier New',monospace;font-size:48px;font-weight:bold;color:var(--green);line-height:1" id="kpi-ldi-p">—</div>
+          </div>
+          <div style="font-size:32px;color:var(--border);font-weight:300;padding-bottom:6px">|</div>
+          <div>
+            <div style="font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Penempatan</div>
+            <div style="font-family:'Courier New',monospace;font-size:48px;font-weight:bold;color:var(--blue);line-height:1" id="kpi-ldi-n">—</div>
+          </div>
+        </div>
+        <div class="kpi-progress" style="margin-top:14px"><div class="kpi-progress-fill" id="kpi-ldi-n-bar"></div></div>
       </div>
       <div class="kpi-card" style="--accent:var(--gold)">
-        <div class="kpi-label">% Pencapaian Sasaran</div>
-        <div class="kpi-value" id="kpi-pct">—</div>
-        <div class="kpi-sub">Dari sasaran 1,000 penempatan</div>
-        <div class="kpi-progress"><div class="kpi-progress-fill" id="kpi-pct-bar"></div></div>
-      </div>
-      <div class="kpi-card" style="--accent:var(--coral)">
-        <div class="kpi-label">Baki Sasaran</div>
-        <div class="kpi-value" id="kpi-negeri">—</div>
-        <div class="kpi-sub">Penempatan lagi diperlukan</div>
-        <div class="kpi-progress"><div class="kpi-progress-fill" id="kpi-negeri-bar"></div></div>
-      </div>
-    </div>
-
-    <!-- CATEGORY SECTION -->
-    <div class="section-head" style="margin-top:8px">
-      <div class="section-title">Analisis Kategori</div>
-      <div class="section-line"></div>
-    </div>
-
-    <div class="cat-grid" style="grid-template-columns:repeat(2,1fr)">
-      <div class="cat-card" data-label="LDI">
-        <div class="cat-name">LDI (Termasuk Terus ke Industri)</div>
-        <div class="cat-numbers">
-          <div class="cat-num-block">
-            <div class="cat-num-label">Peluang</div>
-            <div class="cat-num-val" style="color:var(--green)" id="cat-ldi-p">—</div>
+        <div class="kpi-label" style="font-size:13px;letter-spacing:3px;margin-bottom:16px">PEKERJAAN</div>
+        <div style="display:flex;align-items:flex-end;gap:24px">
+          <div>
+            <div style="font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Peluang</div>
+            <div style="font-family:'Courier New',monospace;font-size:48px;font-weight:bold;color:var(--gold);line-height:1" id="kpi-pek-p">—</div>
           </div>
-          <div class="cat-num-block">
-            <div class="cat-num-label">Penempatan</div>
-            <div class="cat-num-val" style="color:var(--white)" id="cat-ldi-n">—</div>
+          <div style="font-size:32px;color:var(--border);font-weight:300;padding-bottom:6px">|</div>
+          <div>
+            <div style="font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">Penempatan</div>
+            <div style="font-family:'Courier New',monospace;font-size:48px;font-weight:bold;color:var(--coral);line-height:1" id="kpi-pek-n">—</div>
           </div>
         </div>
-        <div class="cat-bar"><div class="cat-bar-fill" id="cat-ldi-bar" style="background:var(--green)"></div></div>
-        <div class="cat-pct" style="color:var(--green)" id="cat-ldi-pct">—</div>
-      </div>
-
-      <div class="cat-card" data-label="PEK">
-        <div class="cat-name">Pekerjaan</div>
-        <div class="cat-numbers">
-          <div class="cat-num-block">
-            <div class="cat-num-label">Peluang</div>
-            <div class="cat-num-val" style="color:var(--gold)" id="cat-pek-p">—</div>
-          </div>
-          <div class="cat-num-block">
-            <div class="cat-num-label">Penempatan</div>
-            <div class="cat-num-val" style="color:var(--white)" id="cat-pek-n">—</div>
-          </div>
-        </div>
-        <div class="cat-bar"><div class="cat-bar-fill" id="cat-pek-bar" style="background:var(--gold)"></div></div>
-        <div class="cat-pct" style="color:var(--gold)" id="cat-pek-pct">—</div>
+        <div class="kpi-progress" style="margin-top:14px"><div class="kpi-progress-fill" id="kpi-pek-n-bar"></div></div>
       </div>
     </div>
+
+    <div class="kpi-grid" style="grid-template-columns:1fr 1fr;margin-top:16px">
+      <div class="kpi-card" style="--accent:var(--green)">
+        <div class="kpi-label">% Pencapaian LDI</div>
+        <div class="kpi-value" id="kpi-pct-ldi">—</div>
+        <div class="kpi-sub">Penempatan LDI</div>
+        <div class="kpi-progress"><div class="kpi-progress-fill" id="kpi-pct-ldi-bar"></div></div>
+      </div>
+      <div class="kpi-card" style="--accent:var(--gold)">
+        <div class="kpi-label">% Pencapaian Pekerjaan</div>
+        <div class="kpi-value" id="kpi-pct-pek">—</div>
+        <div class="kpi-sub">Penempatan Pekerjaan</div>
+        <div class="kpi-progress"><div class="kpi-progress-fill" id="kpi-pct-pek-bar"></div></div>
+      </div>
+    </div>
+
 
     <!-- CHARTS -->
-    <div class="section-head">
+    <div class="section-head" style="margin-top:8px">
       <div class="section-title">Carta Interaktif</div>
       <div class="section-line"></div>
-    </div>
-
-    <div class="filter-tabs">
-      <button class="filter-btn active" onclick="switchChart('ldi',this)">LDI</button>
-      <button class="filter-btn" onclick="switchChart('pekerjaan',this)">Pekerjaan</button>
     </div>
 
     <div class="filter-tabs">
@@ -765,15 +742,17 @@ function renderDashboard(data, kemaskini) {
   const pekN = data.reduce((s,r)=>s+r.pekN,0);
 
   // KPI
-  animNum(document.getElementById('kpi-peluang'), totalPeluang);
-  animNum(document.getElementById('kpi-penempatan'), totalPenem);
-  animNum(document.getElementById('kpi-pct'), pct, '%');
-  animNum(document.getElementById('kpi-negeri'), baki);
+  animNum(document.getElementById('kpi-ldi-p'), ldiP);
+  animNum(document.getElementById('kpi-ldi-n'), ldiN);
+  animNum(document.getElementById('kpi-pek-p'), pekP);
+  animNum(document.getElementById('kpi-pek-n'), pekN);
+  animNum(document.getElementById('kpi-pct-ldi'), ldiP > 0 ? Math.round(ldiN/ldiP*100) : 0, '%');
+  animNum(document.getElementById('kpi-pct-pek'), pekP > 0 ? Math.round(pekN/pekP*100) : 0, '%');
 
-  setBar('kpi-peluang-bar', totalPeluang / 1500 * 100);
-  setBar('kpi-penempatan-bar', totalPenem / 1000 * 100);
-  setBar('kpi-pct-bar', pct);
-  setBar('kpi-negeri-bar', Math.max(0, 100 - pct));
+  setBar('kpi-ldi-n-bar', ldiP > 0 ? ldiN/ldiP*100 : 0);
+  setBar('kpi-pek-n-bar', pekP > 0 ? pekN/pekP*100 : 0);
+  setBar('kpi-pct-ldi-bar', ldiP > 0 ? ldiN/ldiP*100 : 0);
+  setBar('kpi-pct-pek-bar', pekP > 0 ? pekN/pekP*100 : 0);
 
   // Category cards
   document.getElementById('cat-ldi-p').textContent = ldiP.toLocaleString();
