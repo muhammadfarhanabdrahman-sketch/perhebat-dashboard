@@ -663,10 +663,11 @@ function setBar(id, pct) {
 }
 
 async function loadData() {
-  // Papar fallback data SEGERA — tak perlu tunggu internet
-  renderDashboard(getFallbackData(), '5-05-2026');
+  // Papar fallback TERUS — tak tunggu internet langsung
+  allData = getFallbackData();
+  renderDashboard(allData, '5-05-2026');
 
-  // Cuba fetch live data dalam background (tak block UI)
+  // Cuba fetch live data senyap-senyap dalam background
   try {
     const controller = new AbortController();
     setTimeout(() => controller.abort(), 8000);
@@ -745,21 +746,6 @@ function renderDashboard(data, kemaskini) {
   setBar('kpi-pek-n-bar', pekP > 0 ? pekN/pekP*100 : 0);
   setBar('kpi-pct-ldi-bar', ldiP > 0 ? ldiN/ldiP*100 : 0);
   setBar('kpi-pct-pek-bar', pekP > 0 ? pekN/pekP*100 : 0);
-
-  // Category cards
-  document.getElementById('cat-ldi-p').textContent = ldiP.toLocaleString();
-  document.getElementById('cat-ldi-n').textContent = ldiN.toLocaleString();
-  document.getElementById('cat-pek-p').textContent = pekP.toLocaleString();
-  document.getElementById('cat-pek-n').textContent = pekN.toLocaleString();
-
-  const ldiPct = ldiP > 0 ? Math.round(ldiN/ldiP*100) : 0;
-  const pekPct = pekP > 0 ? Math.round(pekN/pekP*100) : 0;
-
-  document.getElementById('cat-ldi-pct').textContent = ldiPct + '% kadar penempatan';
-  document.getElementById('cat-pek-pct').textContent = pekPct + '% kadar penempatan';
-
-  setBar('cat-ldi-bar', ldiPct);
-  setBar('cat-pek-bar', pekPct);
 
   // Date & badge
   document.getElementById('last-updated').textContent = kemaskini;
